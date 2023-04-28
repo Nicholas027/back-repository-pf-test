@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use(morgan("Combined"));
+app.use(morgan("combined"));
 
 app.use("/", express.static(path.join(__dirname, "public")));
 
