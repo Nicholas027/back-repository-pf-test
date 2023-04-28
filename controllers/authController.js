@@ -31,7 +31,7 @@ const register = async (req, res) => {
       to: user.email, // El correo electrónico del destinatario
       from: "nicholas0810152015@gmail.com", // El correo electrónico del remitente
       subject: "Verificacion de Usuario Datazo",
-      html: `<a href="http://localhost:3500/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
+      html: `<a href="https://datazotest.netlify.app/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
             <p>⚠ Aguarda un siguiente mail avisandote que has confirmado correctamente su cuenta una vez haya hecho click en el link!</p>`,
       dynamicTemplateData: {
         token: user.tokenConfirm, // Token generado para el usuario
@@ -74,7 +74,7 @@ const confirmarCuenta = async (req, res) => {
 
     await user.save();
     //Messsage
-    res.redirect("http://localhost:3000/login");
+    res.redirect("https://datazotest.netlify.app/login");
     const response = new Promise((resolve) => {
       setTimeout(() => {
         resolve({ ok: "Cuenta verificada. Ya puedes iniciar sesion!" });
