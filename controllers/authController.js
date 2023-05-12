@@ -29,9 +29,9 @@ const register = async (req, res) => {
     await user.save();
     const msg = {
       to: user.email, // El correo electrónico del destinatario
-      from: "nicholas0810152015@gmail.com", // El correo electrónico del remitente
+      from: "soportetecnicodatazo@gmail.com", // El correo electrónico del remitente
       subject: "Verificacion de Usuario Datazo",
-      html: `<a href="https://datazobacktest.onrender.com/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
+      html: `<a href="http://localhost:3500/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
             <p>⚠ Aguarda un siguiente mail avisandote que has confirmado correctamente su cuenta una vez haya hecho click en el link!</p>`,
       dynamicTemplateData: {
         token: user.tokenConfirm, // Token generado para el usuario
@@ -55,7 +55,9 @@ const register = async (req, res) => {
     console.log(error);
     //validación#1
     if (error.code === 11000) {
-      return res.status(400).json({ error: "Ya existe este usuario!" });
+      return res
+        .status(400)
+        .json({ error: "Ya existe un usuario registrado con ese email" });
     }
     return res.status(500).json({ error: "Error de Servidor" });
   }
@@ -74,7 +76,7 @@ const confirmarCuenta = async (req, res) => {
 
     await user.save();
     //Messsage
-    res.redirect("https://datazotest.netlify.app/login");
+    res.redirect("http://localhost:3000/login");
     const response = new Promise((resolve) => {
       setTimeout(() => {
         resolve({ ok: "Cuenta verificada. Ya puedes iniciar sesion!" });
@@ -83,7 +85,7 @@ const confirmarCuenta = async (req, res) => {
     //sendgrid mail confirm
     const msg = {
       to: user.email, // El correo electrónico del destinatario
-      from: "nicholas0810152015@gmail.com", // El correo electrónico del remitente
+      from: "soportetecnicodatazo@gmail.com", // El correo electrónico del remitente
       subject: "Verificacion de Usuario Datazo",
       html: `${user.nombre} ${user.apellido} tu cuenta ha sido confirmada correctamente, ya puedes iniciar sesion`,
     };
@@ -236,7 +238,7 @@ const passwordRecoveryMail = async (req, res) => {
   try {
     const msg = {
       to: user.email,
-      from: "nicholas0810152015@gmail.com",
+      from: "soportetecnicodatazo@gmail.com",
       subject: "Recuperación de contraseña | Datazo",
       html: `
       <p>Estás recibiendo este correo electrónico porque solicitaste recuperar tu contraseña en nuestra aplicación.</p>
@@ -289,7 +291,7 @@ const verifyVerificationCode = async (req, res) => {
 
   const msg = {
     to: user.email,
-    from: "nicholas0810152015@gmail.com",
+    from: "soportetecnicodatazo@gmail.com",
     subject: "Verificacion Exitosa",
     html: `
     <p>Tu contraseña ha sido actualizada correctamente, gracias por confiar en nosotros!.</p>
