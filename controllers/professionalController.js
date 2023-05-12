@@ -37,6 +37,11 @@ const addProfessional = async (req, res) => {
       calificacion,
       disponible,
       contacto,
+      referencias,
+      zona,
+      expLaboral,
+      educacion,
+      habilidades,
       comentarios,
     } = req.body;
     const addProfessional = new Professional({
@@ -48,12 +53,17 @@ const addProfessional = async (req, res) => {
       calificacion,
       disponible,
       contacto,
+      referencias,
+      zona,
+      expLaboral,
+      educacion,
+      habilidades,
       comentarios,
     });
     await addProfessional.save();
     return res.status(201).json({ ok: true });
   } catch (error) {
-    return res.status(501).json({ error: "Problema en el Servidor" });
+    return res.status(501).json({ error: "Hubo un problema en el Servidor!" });
   }
 };
 
