@@ -38,6 +38,55 @@ const professionalSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    referencias: {
+      type: String,
+      required: false,
+      maxlenght: 140,
+    },
+    zona: {
+      type: String,
+      required: false,
+    },
+    expLaboral: [
+      {
+        empresa: {
+          type: String,
+          required: false,
+        },
+        cargo: {
+          type: String,
+          required: false,
+        },
+        periodo: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
+    educacion: [
+      {
+        institucion: {
+          type: String,
+          required: false,
+        },
+        titulo: {
+          type: String,
+          required: false,
+        },
+        periodo: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
+    habilidades: [
+      {
+        habilidad: {
+          type: String,
+          required: false,
+        },
+      },
+    ],
     comentarios: [
       {
         titulo: {
@@ -51,10 +100,6 @@ const professionalSchema = new mongoose.Schema(
         nombrePersona: {
           type: String,
           required: false,
-        },
-        fotoPersona: {
-          type: String,
-          default: null,
         },
         calificacionComentario: {
           type: String,
