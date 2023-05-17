@@ -108,7 +108,7 @@ const confirmarCuenta = async (req, res) => {
       .send(msgWelcome)
       .then(() => {
         console.log("Mail de bienvenida enviado");
-        res.redirect("http://localhost:3000/login");
+        res.redirect("https://datazotest.netlify.app/login");
       })
       .catch((error) => console.error(error));
 
