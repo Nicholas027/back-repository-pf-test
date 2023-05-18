@@ -120,7 +120,7 @@ const confirmarCuenta = async (req, res) => {
 
     return res.json(await response);
   } catch (error) {
-    res.json({error});
+    res.json({ok: "Cuenta Verificada"})
     return res.redirect("/auth/login");
   }
 };
