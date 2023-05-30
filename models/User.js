@@ -48,6 +48,22 @@ const userSchema = new mongoose.Schema(
       type: "string",
       default: null,
     },
+    tokenContacto: [
+      {
+        token: {
+          type: "string",
+          default: null,
+        },
+      },
+    ],
+    tokenCalificacion: [
+      {
+        token: {
+          type: "string",
+          default: null,
+        },
+      },
+    ],
   },
   {
     versionKey: false,
