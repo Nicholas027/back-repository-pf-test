@@ -224,7 +224,6 @@ const didYouContactHimGetToken = async (req, res) => {
 
     const isTokenExpired = checkIfTokenExpired(token);
     if (isTokenExpired) {
-      // El token ha expirado, eliminarlo de la base de datos
       foundUser.tokenContacto = foundUser.tokenContacto.filter(
         (item) => item.token !== token
       );
@@ -345,7 +344,6 @@ const commentAndRatingGet = async (req, res) => {
 
     const isTokenExpired = checkIfTokenExpired(token);
     if (isTokenExpired) {
-      // El token ha expirado, eliminarlo de la base de datos
       foundUser.tokenContacto = foundUser.tokenContacto.filter(
         (item) => item.token !== token
       );
