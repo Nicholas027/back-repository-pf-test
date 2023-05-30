@@ -154,7 +154,7 @@ const didYouContactHim = async (req, res) => {
 
     const token = generateToken(emailCliente);
     const alt = profesion;
-    const link = `http://localhost:3000/dash/professionals/${alt}/${id}/${token}`;
+    const link = `https://datazotest.netlify.app/dash/professionals/${alt}/${id}/${token}`;
 
     const foundCli = await User.findOne({ email: emailCliente });
 
@@ -290,7 +290,7 @@ const commentAndRating = async (req, res) => {
 
   const token = generateToken(emailCliente);
   const alt = profesion;
-  const link = `http://localhost:3000/dash/professionals/${alt}/${id}/${token}/calificacion`;
+  const link = `https://datazotest.netlify.app/dash/professionals/${alt}/${id}/${token}/calificacion`;
 
   const foundCli = await User.findOne({ email: emailCliente });
 
