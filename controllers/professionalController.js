@@ -17,22 +17,17 @@ const checkIfTokenExpired = (token) => {
     const decodedToken = jwt.verify(token, secretKey);
     const expiryDate = new Date(decodedToken.exp * 1000);
 
-    // Obtén la fecha actual
     const currentDate = new Date();
 
-    // Compara la fecha actual con la fecha de expiración del token
+    
     if (currentDate > expiryDate) {
-      // El token ha expirado
       return true;
     }
 
-    // El token no ha expirado
     return false;
   } catch (error) {
-    // Ocurrió un error al verificar el token
-    // Aquí puedes manejar el error según tus necesidades
     console.error("Error al verificar el token:", error);
-    return true; // Consideramos que el token ha expirado en caso de error
+    return true;
   }
 };
 
