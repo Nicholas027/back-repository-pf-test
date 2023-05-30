@@ -177,7 +177,6 @@ const didYouContactHim = async (req, res) => {
       from: "soportetecnicodatazo@gmail.com",
       subject: "Has contactado un profesional",
       html: `<p>Estimado(a) ${nombreCliente} ${apellidoCliente},</p>
-      <br>
       <p>Agradecemos tu interés en contactar a ${nombre} ${apellido}. Si ya estableciste el contacto, completa tu experiencia aquí: <a href="${link}">Haz click aquí!</a>. Si aún no lo lograste, sigue explorando nuestro catálogo completo: <a href="https://datazotest.netlify.app/dash/professionals/${alt}">Catálogo</a>.</p>
       <br>
       <p>Atentamente,</p>
@@ -304,7 +303,9 @@ const commentAndRating = async (req, res) => {
     to: emailCliente,
     from: "soportetecnicodatazo@gmail.com",
     subject: "Califica al profesional",
-    html: `Hola ${nombreCliente} ${apellidoCliente}!, queremos saber como te fué contratando los servicios de ${nombre} ${apellido} cuyo ${profesion} has requerido de sus servicios: ${descripcionTrabajo} acordando para el dia ${fechaTrabajo} según los datos que nos aportaste, estaríamos encantados de que califiques y comentes su atención, si lo deseas, puedes hacer <a href="${link}">click aquí</a> para hacerlo, de lo contrario, ignora este mail <br> <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
+    html: `<p>Hola ${nombreCliente} ${apellidoCliente}!, queremos saber como te fué contratando los servicios de ${nombre} ${apellido} cuyo ${profesion} has requerido de sus servicios: ${descripcionTrabajo} acordando para el dia ${fechaTrabajo} según los datos que nos aportaste, estaríamos encantados de que califiques y comentes su atención, si lo deseas, puedes hacer <a href="${link}">click aquí</a> para hacerlo, de lo contrario, solamente ignora este mail.</p> 
+    <br> 
+    <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
   };
   sgMail
     .send(msg)
