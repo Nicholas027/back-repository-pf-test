@@ -182,7 +182,7 @@ const didYouContactHim = async (req, res) => {
       <br>
       <p>Nos gustaría saber si has logrado establecer el contacto deseado. Si has tenido éxito en este sentido, te pedimos que hagas clic en el siguiente enlace para completar tu experiencia: <a href="${link}">Haz click aquí!</a>.</p>
       <br>
-      <p>Por otro lado, si aún no has podido concretar el contacto con ${nombre} ${apellido}, lamentamos cualquier inconveniente que esto haya causado. Sabemos lo importante que es para ti encontrar la opción adecuada en nuestro catálogo. Te alentamos a que sigas explorando las alternativas disponibles y estamos seguros de que encontrarás una opción que se ajuste a tus necesidades. Puedes acceder a nuestro catálogo completo a través del siguiente enlace: <a href="http://localhost:3000/dash/professionals/${alt}">Catálogo</a>.</p>
+      <p>Por otro lado, si aún no has podido concretar el contacto con ${nombre} ${apellido}, lamentamos cualquier inconveniente que esto haya causado. Sabemos lo importante que es para ti encontrar la opción adecuada en nuestro catálogo. Te alentamos a que sigas explorando las alternativas disponibles y estamos seguros de que encontrarás una opción que se ajuste a tus necesidades. Puedes acceder a nuestro catálogo completo a través del siguiente enlace: <a href="https://datazotest.netlify.app/dash/professionals/${alt}">Catálogo</a>.</p>
       <br>
       <p>En caso de que necesites ayuda adicional o tengas alguna pregunta, no dudes en contactarnos. Estamos aquí para brindarte asistencia y asegurarnos de que tengas la mejor experiencia posible en nuestra plataforma.</p>
       <br>
