@@ -252,7 +252,7 @@ const commentAndRating = async (req, res) => {
   }
 
   const { nombre, apellido, profesion } = foundProf;
-  const {
+  let {
     nombreCliente,
     apellidoCliente,
     fechaTrabajo,
@@ -264,10 +264,14 @@ const commentAndRating = async (req, res) => {
     !nombreCliente ||
     !apellidoCliente ||
     !emailCliente ||
-    !fechaTrabajo ||
-    !descripcionTrabajo
+    !fechaTrabajo
   ) {
     return res.status(400).json({ error: "Faltan datos del cliente" });
+  }
+  
+  //en el caso que el input de descripcion venga vacio, se establecerá como trabajo corriente de X profesion
+  if (descripcionTrabajo == "") {
+    descripcionTrabajo = `trabajo corriente de ${profesion}`;
   }
 
   const token = generateToken(emailCliente);
