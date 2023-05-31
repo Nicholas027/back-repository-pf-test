@@ -308,6 +308,7 @@ const commentAndRating = async (req, res) => {
     <p>Gracias y esperamos tus comentarios.</p>
     <p>Atentamente,</p>
     <p>el equipo de Datazo!</p>
+    <br>
     <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`
   };
   sgMail
