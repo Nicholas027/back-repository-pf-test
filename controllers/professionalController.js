@@ -300,10 +300,15 @@ const commentAndRating = async (req, res) => {
   const msg = {
     to: emailCliente,
     from: "soportetecnicodatazo@gmail.com",
-    subject: "Califica al profesional",
-    html: `<p>Hola ${nombreCliente} ${apellidoCliente}!, queremos saber como te fué contratando los servicios de ${nombre} ${apellido} cuyo ${profesion} has requerido de sus servicios: ${descripcionTrabajo} acordando para el dia ${fechaTrabajo} según los datos que nos aportaste, estaríamos encantados de que califiques y comentes su atención, si lo deseas, puedes hacer <a href="${link}">click aquí</a> para hacerlo, de lo contrario, solamente ignora este mail.</p> 
+    subject: "Solicitud de calificación a nuestro profesional",
+    html: `<p>¡Hola ${nombreCliente} ${apellidoCliente}!</p>
+    <br>
+    <p>Nos gustaría conocer tu experiencia al contratar los servicios de ${nombre} ${apellido} como ${profesion}. Según los datos que nos proporcionaste, se acordó la visita para el ${fechaTrabajo}. Estaríamos encantados si pudieras tomarte un momento para calificar y comentar su atención. Si deseas hacerlo, puedes hacer <a href="${link}">click aquí!</a>. En caso contrario, simplemente ignora este correo.</p> 
     <br> 
-    <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
+    <p>Gracias y esperamos tus comentarios.</p>
+    <p>Atentamente,</p>
+    <p>el equipo de Datazo!</p>
+    <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`
   };
   sgMail
     .send(msg)
