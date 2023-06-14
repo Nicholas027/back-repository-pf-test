@@ -301,7 +301,7 @@ const commentAndRating = async (req, res) => {
     to: emailCliente,
     from: "soportetecnicodatazo@gmail.com",
     subject: "Solicitud de calificación a nuestro profesional",
-    html: `<p>¡Califica la atención de ${nombreCliente} ${apellidoCliente} como ${profesion}!</p>
+    html: `<p>¡Califica la atención de ${nombre} ${apellido} como ${profesion}!</p>
     <p>Tu opinión es importante y nos ayuda a mejorar.</p>
     <p>Haz clic <a href="${link}">aquí</a> para compartir tu experiencia y disfruta de ventajas exclusivas para nuestros clientes comprometidos:</p>
     <ul>
