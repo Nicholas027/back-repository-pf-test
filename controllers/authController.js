@@ -31,7 +31,7 @@ const register = async (req, res) => {
       to: user.email, // El correo electrónico del destinatario
       from: "soportetecnicodatazo@gmail.com", // El correo electrónico del remitente
       subject: "Verificacion de Usuario Datazo",
-      html: `<a href="http://localhost:3500/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
+      html: `<a href="https://datazobacktest.onrender.com/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
             <p>⚠ Aguarda un siguiente mail avisandote que has confirmado correctamente su cuenta una vez haya hecho click en el link!</p>
             <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
       dynamicTemplateData: {
@@ -110,7 +110,7 @@ const confirmarCuenta = async (req, res) => {
       .send(msgWelcome)
       .then(() => {
         console.log("Mail de bienvenida enviado");
-        res.redirect("http://localhost:3000/login");
+        res.redirect("https://datazotest.netlify.app/login");
       })
       .catch((error) => console.error(error));
 
