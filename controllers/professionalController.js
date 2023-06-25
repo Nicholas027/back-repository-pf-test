@@ -167,7 +167,7 @@ const commentAndRating = async (req, res) => {
     descripcionTrabajo = `trabajo corriente de ${profesion}`;
   }
 
-  const encabezadoLink = "http://localhost:3500";
+  const encabezadoLink = "https://datazobacktest.onrender.com";
   const solicitudId = mongoose.Types.ObjectId();
   const linkAceptar = `${encabezadoLink}/professionals/accepted/${emailCli}/${nombreProfesional}/${solicitudId}`;
   const linkRechazar = `${encabezadoLink}/professionals/rejected/${emailCli}/${nombreProfesional}/${solicitudId}`;
