@@ -31,7 +31,7 @@ const register = async (req, res) => {
       to: user.email, // El correo electrónico del destinatario
       from: "soportetecnicodatazo@gmail.com", // El correo electrónico del remitente
       subject: "Verificacion de Usuario Datazo",
-      html: `<a href="http://localhost:3500/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
+      html: `<a href="https://datazobacktest.onrender.com/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
             <p>⚠ Aguarda un siguiente mail avisandote que has confirmado correctamente su cuenta una vez haya hecho click en el link!</p>
             <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
       dynamicTemplateData: {
@@ -110,7 +110,7 @@ const confirmarCuenta = async (req, res) => {
       .send(msgWelcome)
       .then(() => {
         console.log("Mail de bienvenida enviado");
-        res.redirect("http://localhost:3000/login");
+        res.redirect("https://datazo.netlify.app/login");
       })
       .catch((error) => console.error(error));
 
@@ -348,7 +348,114 @@ const getInfo = async (req, res) => {
   }
 };
 
+const getInfoSoli = async (req, res) => {
+  try {
+    const { email, idSoli } = req.params;
+    if (!email) return res.status(400).json({ error: "Sin email recibido" });
+    const user = await User.findOne({ email: email });
+    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+    const solicitud = user.misSolicitudes.find(
+      (s) => s._id.toString() === idSoli
+    );
+
+    if (!solicitud) {
+      return res.status(404).json({
+        error: "No se encontró ninguna solicitud con el ID proporcionado",
+      });
+    }
+
+    /** const solicitudIndex = user.misSolicitudes.findIndex(
+      (solicitud) => solicitud._id.toString() === idSoli
+    );
+    if (solicitudIndex === -1) {
+      return res.status(404).json({ error: "La solicitud no existe" });
+    } */
+
+    res.status(200).json(solicitud);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
+};
+
 const eliminarSolicitud = async (req, res) => {
+  const userId = req.body.userId;
+  const solicitudId = req.params.id;
+  const professionalId = req.body.professionalId;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "El usuario no existe" });
+    }
+
+    const profesional = await Professional.findById(professionalId);
+    if (!profesional) {
+      return res.status(404).json({ error: "El profesional no existe" });
+    }
+
+    const solicitud = user.misSolicitudes.find(
+      (s) => s._id.toString() === solicitudId
+    );
+
+    if (!solicitud) {
+      return res.status(404).json({
+        error: "No se encontró ninguna solicitud con el ID proporcionado",
+      });
+    }
+
+    const date1 = new Date(solicitud.fecha[0]);
+    const date2 = new Date(solicitud.fecha[1]);
+
+    const msg = {
+      to: profesional.email,
+      from: "soportetecnicodatazo@gmail.com",
+      subject: "Han eliminado una solicitud que estaba en espera",
+      html: `
+      <p>${profesional.nombre} ${
+        profesional.apellido
+      }! Te contactamos para avisarte que ${user.nombre} ${
+        user.apellido
+      }, ha rechazado la orden de trabajo</p>
+      <p>Tal orden consistía en ${
+        solicitud.descripcion
+      } para las fechas entre ${date1.getFullYear()}-${(date1.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${date1
+        .getDate()
+        .toString()
+        .padStart(2, "0")} y ${date2.getFullYear()}-${(date2.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}-${date2.getDate().toString().padStart(2, "0")}.</p>
+      <p>Te vamos a estar avisando cuando tengas otra orden de trabajo, muchas gracias por confiar en nosotros!</p>
+      <p>Atentamente,</p>
+      <p>El equipo de Datazo</p>
+      <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />
+    `,
+    };
+
+    await sgMail.send(msg);
+
+    const solicitudIndex = user.misSolicitudes.findIndex(
+      (solicitud) => solicitud._id.toString() === solicitudId
+    );
+    if (solicitudIndex === -1) {
+      return res.status(404).json({ error: "La solicitud no existe" });
+    }
+
+    user.misSolicitudes.splice(solicitudIndex, 1);
+
+    await user.save();
+
+    res.json({ mensaje: "Solicitud eliminada correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al eliminar la solicitud" });
+  }
+};
+
+const cancelarPropuesta = async (req, res) => {
   const userId = req.body.userId;
   const solicitudId = req.params.id;
   const professionalId = req.body.professionalId;
@@ -377,11 +484,12 @@ const eliminarSolicitud = async (req, res) => {
     const msg = {
       to: profesional.email,
       from: "soportetecnicodatazo@gmail.com",
-      subject: "Han rechazado una solicitud",
+      subject: "Han rechazado tu propuesta de trabajo",
       html: `
-      <p>${profesional.nombre} ${profesional.apellido}! Te contactamos para avisarte que ${user.nombre} ${user.apellido}, ha rechazado su solicitud</p>
-      <p>Tal solicitud consistia en ${solicitud.descripcion} para la fecha: ${solicitud.fecha},</p>
-      <p>Te vamos a estar avisando cuando tengas otra solicitud, muchas gracias por confiar en nosotros!</p>
+      <p>${profesional.nombre} ${profesional.apellido}! Te contactamos para avisarte que ${user.nombre} ${user.apellido}, ha rechazado la propuesta de orden de trabajo</p>
+      <p>Tal orden consistía en ${solicitud.descripcion} para las fechas entre ${solicitud.fechaElegida[0]} y ${solicitud.fechaElegida[1]} a la ${solicitud.horario},</p>
+      <p>Tu habías elegido la fecha ${solicitud.fechaElegida} cuyo presupuesto era de: $${solicitud.presupuesto}</p>
+      <p>Te vamos a estar avisando cuando tengas otra orden de trabajo, muchas gracias por confiar en nosotros!</p>
       <p>Atentamente,</p>
       <p>El equipo de Datazo</p>
       <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />
@@ -401,7 +509,123 @@ const eliminarSolicitud = async (req, res) => {
 
     await user.save();
 
-    res.json({ mensaje: "Solicitud eliminada correctamente" });
+    res.json({ mensaje: "Propuesta eliminada correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al eliminar la solicitud" });
+  }
+};
+
+const aceptarPropuesta = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const solicitudId = req.params.id;
+    const professionalId = req.body.professionalId;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "El usuario no existe" });
+    }
+
+    const profesional = await Professional.findById(professionalId);
+    if (!profesional) {
+      return res.status(404).json({ error: "El profesional no existe" });
+    }
+
+    const solicitud = user.misSolicitudes.find(
+      (s) => s._id.toString() === solicitudId
+    );
+
+    if (!solicitud) {
+      return res.status(404).json({
+        error: "No se encontró ninguna solicitud con el ID proporcionado",
+      });
+    }
+
+    const solicitudIndex = user.misSolicitudes.findIndex(
+      (solicitud) => solicitud._id.toString() === solicitudId
+    );
+    if (solicitudIndex === -1) {
+      return res.status(404).json({ error: "La solicitud no existe" });
+    }
+
+    // Cambiar la propiedad `propAceptada` a `true`
+    solicitud.propAceptada = true;
+
+    // Guardar los cambios en la base de datos
+    await user.save();
+
+    const msg = {
+      to: profesional.email,
+      from: "soportetecnicodatazo@gmail.com",
+      subject: "Te han aceptado una propuesta desde Datazo!",
+      html: `${profesional.nombre} ${profesional.apellido} han respondido a tu propuesta de trabajo!
+    <p>La misma ha sido registrada y guardada en tu sistema de reservas en Datazo!</p>
+    <p><b>Recuerda</b> revisar siempre tu registro de solicitudes para mantener continuo control sobre tus ordenes de trabajo!</p>
+    <p>La propuesta consistia en ${solicitud.descripcion} para el dia ${solicitud.fechaElegida} a la ${solicitud.horario}.</p>
+    <p>El presupuesto era de ${solicitud.presupuesto} para el cliente ${user.nombre} ${user.apellido}.</p>
+    <p>Le hemos facilitado de tu numero de contacto para en caso que tu seas contactado para refinar detalles sobre el trabajo.</p>
+    <p>Gracias por confiar en nosotros. Atentamente, el equipo de Datazo!</p>
+    <br>
+    <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
+    };
+    sgMail
+      .send(msg)
+      .then(() => console.log("Se ha enviado el mail propuesta de trabajo"))
+      .catch((error) => console.error(error));
+
+    return res
+      .status(200)
+      .json({ message: "Propuesta del Profesional aceptada correctamente" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ error: "Ocurrió un error al aceptar la propuesta" });
+  }
+};
+
+//delete work when the flux has been completed (trash icon)
+const deleteSoliCompleted = async (req, res) => {
+  const userId = req.body.userId;
+  const solicitudId = req.params.id;
+  const professionalId = req.body.professionalId;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "El usuario no existe" });
+    }
+
+    const profesional = await Professional.findById(professionalId);
+    if (!profesional) {
+      return res.status(404).json({ error: "El profesional no existe" });
+    }
+
+    const solicitud = user.misSolicitudes.find(
+      (s) => s._id.toString() === solicitudId
+    );
+
+    if (!solicitud) {
+      return res.status(404).json({
+        error: "No se encontró ninguna solicitud con el ID proporcionado",
+      });
+    }
+
+    const solicitudIndex = user.misSolicitudes.findIndex(
+      (solicitud) => solicitud._id.toString() === solicitudId
+    );
+    if (solicitudIndex === -1) {
+      return res.status(404).json({ error: "La solicitud no existe" });
+    }
+
+    user.misSolicitudes.splice(solicitudIndex, 1);
+
+    await user.save();
+
+    res.json({
+      mensaje: "Solicitud cuyo flujo completado eliminado correctamente",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al eliminar la solicitud" });
@@ -417,5 +641,9 @@ module.exports = {
   passwordRecoveryMail,
   verifyVerificationCode,
   getInfo,
+  getInfoSoli,
   eliminarSolicitud,
+  aceptarPropuesta,
+  deleteSoliCompleted,
+  cancelarPropuesta,
 };

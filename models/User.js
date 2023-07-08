@@ -59,6 +59,14 @@ const userSchema = new mongoose.Schema(
           type: String,
           default: null,
         },
+        numeroProfesional: {
+          type: String,
+          default: null,
+        },
+        direccionCliente: {
+          type: String,
+          default: null,
+        },
         profesion: {
           type: String,
           default: null,
@@ -68,6 +76,10 @@ const userSchema = new mongoose.Schema(
           default: null,
         },
         fecha: {
+          type: Array,
+          default: null,
+        },
+        fechaElegida: {
           type: String,
           default: null,
         },
@@ -75,10 +87,26 @@ const userSchema = new mongoose.Schema(
           type: String,
           default: null,
         },
+        presupuesto: {
+          type: String,
+          default: null,
+        },
+        comentario: {
+          type: String,
+          default: null,
+        },
         aceptado: {
           type: Boolean,
           default: null,
         },
+        propAceptada: {
+          type: Boolean,
+          default: null,
+        },
+        flujoCompleto: {
+          type: Boolean,
+          default: null
+        }
       },
     ],
   },

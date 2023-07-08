@@ -21,8 +21,13 @@ router
   .post(professionalController.commentAndRating);
 
 router
-  .route("/professionals/accepted/:mailCli/:nombreProfesional/:id")
-  .get(professionalController.acceptedWork);
+  .route("/professionals/acceptForm/:mailCli/:nombreProfesional/:id")
+  .get(professionalController.acceptForm);
+
+router
+  .route("/professionals/accepted")
+  .post(professionalController.acceptedWork);
+
 router
   .route("/professionals/rejected/:mailCli/:nombreProfesional/:id")
   .get(professionalController.rejectedWork);

@@ -49,12 +49,20 @@ router.route("/register").post(
 
 router.route("/:token").get(authController.confirmarCuenta); //confirm account route
 
-router.route("/passwordRecoveryMail").post(authController.passwordRecoveryMail);
+router.route("/passwordRecoveryMail").post(authController.passwordRecoveryMail); //send password recovery mail route
 
-router.route("/verifyCode").post(authController.verifyVerificationCode);
+router.route("/verifyCode").post(authController.verifyVerificationCode); //verify the code
 
-router.route("/getInfo/:email").get(authController.getInfo);
+router.route("/getInfo/:email").get(authController.getInfo); //get user info
 
-router.route("/deleteSoli/:id").post(authController.eliminarSolicitud);
+router.route("/getInfoSoli/:email/:idSoli").get(authController.getInfoSoli); //get user's works info
+
+router.route("/deleteSoli/:id").post(authController.eliminarSolicitud); //delete work when is "waiting"
+
+router.route("/deleteProp/:id").post(authController.cancelarPropuesta) //delete work when the prof has been accepted
+
+router.route("/deleteSoliCompleted/:id").post(authController.deleteSoliCompleted) //delete work when the flux has been completed (all states)
+
+router.route("/acceptProp/:id").post(authController.aceptarPropuesta) //accept prof's work (cash and comment)
 
 module.exports = router;

@@ -7,6 +7,7 @@ const loginLimiter = rateLimit({
     message:
       "Demasiados intentos de inicio de sesión, vuelva a intentar luego de 60 seg!",
   },
+  statusCode: 429,
   handler: (req, res, next, options) => {
     res.status(options.statusCode).send(options.message);
   },
