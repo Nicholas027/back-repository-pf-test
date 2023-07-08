@@ -5,8 +5,8 @@ const allowedOrigins = [
   "https://mail.google.com",
   "http://localhost:3500",
   "https://datazobacktest.onrender.com",
-  "https://datazo.netlify.app",
-  "https://datazotest.netlify.app"
+  "https://datazotest.netlify.app",
+  "https://datazo.netlify.app"
 ];
 
 module.exports = allowedOrigins;
