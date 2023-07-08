@@ -4,6 +4,7 @@ const User = require("../models/User");
 const sgMail = require("@sendgrid/mail");
 const moment = require("moment");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const transporter = require("../helpers/mailer");
 
 //generateToken
 
@@ -216,6 +217,32 @@ const commentAndRating = async (req, res) => {
     .then(() => console.log("Se ha enviado el mail para contactar"))
     .catch((error) => console.error(error));
   //Fin de bloque mail
+
+  //bloque de reserva Nodemailer (?)
+  transporter.sendMail({
+    from: process.env.NODEMAILER_USER,
+    to: emailProf,
+    subject: "Te han contactado desde Datazo!",
+    html: `<p>¡${nombreProfesional}! Te ha contactado ${nombreCliente} ${apellidoCliente} para solicitar de tus servicios como ${profesion}!</p>
+    <p>El solicitante necesita de ${descripcionTrabajo} para las fechas entre ${date1.getFullYear()}-${(
+      date1.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}-${date1
+      .getDate()
+      .toString()
+      .padStart(2, "0")} y ${date2.getFullYear()}-${(date2.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${date2
+      .getDate()
+      .toString()
+      .padStart(2, "0")} en horario de la ${horarioTrabajo}</p>
+    <p>En caso de aceptar la orden de trabajo: <a href="${linkAceptar}" target="_blank">haz click aquí</a></p>
+    <p>En caso de negarlo, puedes <a href="${linkRechazar}" target="_blank">hacer click aquí</a></p></p>
+    <p>Gracias por confiar en nosotros! Atentamente, el equipo de Datazo!</p>
+    <br>
+    <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
+  });
 
   const nombreDeProfesional = nombre + " " + apellido;
 
