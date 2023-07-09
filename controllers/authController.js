@@ -3,11 +3,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { nanoid } = require("nanoid");
-const sgMail = require("@sendgrid/mail");
+//const sgMail = require("@sendgrid/mail");
 const crypto = require("crypto");
 const Professional = require("../models/Professional");
+const transporter = require("../helpers/mailer");
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+//sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // @desc Register
 // @route POST /auth
@@ -27,11 +28,12 @@ const register = async (req, res) => {
       tokenConfirm: nanoid(),
     });
     await user.save();
-    const msg = {
+
+    /**const msg = {
       to: user.email, // El correo electrónico del destinatario
       from: "soportetecnicodatazo@gmail.com", // El correo electrónico del remitente
       subject: "Verificacion de Usuario Datazo",
-      html: `<a href="https://datazobacktest.onrender.com/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
+      html: `<a href="http://localhost:3500/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
             <p>⚠ Aguarda un siguiente mail avisandote que has confirmado correctamente su cuenta una vez haya hecho click en el link!</p>
             <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
       dynamicTemplateData: {
@@ -46,7 +48,25 @@ const register = async (req, res) => {
           "Correo electrónico enviado, guardado en base de datos exitoso!"
         )
       )
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); */
+
+    //bloque Nodemailer (?)
+    const result = await transporter
+      .sendMail({
+        from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+        to: user.email,
+        subject: "Verificacion de Usuario Datazo",
+        html: `<a href="https://datazobacktest.onrender.com/auth/${user.tokenConfirm}">Haga click aquí para verificar su cuenta</a>
+            <p>⚠ Aguarda un siguiente mail avisandote que has confirmado correctamente su cuenta una vez haya hecho click en el link!</p>
+            <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
+        dynamicTemplateData: {
+          token: user.tokenConfirm, // Token generado para el usuario
+          expirationDate: "2023-04-20 23:59:59", // Fecha de expiración del token
+        },
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     return res.status(201).json({
       ok: "El mail de verificación ha sido enviado",
@@ -78,7 +98,7 @@ const confirmarCuenta = async (req, res) => {
     await user.save();
 
     // sendgrid mail confirm
-    const msg = {
+    /** const msg = {
       to: user.email,
       from: "soportetecnicodatazo@gmail.com",
       subject: "Verificacion de Usuario Datazo",
@@ -87,9 +107,21 @@ const confirmarCuenta = async (req, res) => {
     sgMail
       .send(msg)
       .then(() => console.log("La confirmación de la cuenta ha sido exitosa!"))
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); */
 
-    const msgWelcome = {
+    //Nodemailer Bloque de Confirmación
+    const result = await transporter
+      .sendMail({
+        from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+        to: user.email,
+        subject: "Verificacion de Usuario Datazo",
+        html: `${user.nombre} ${user.apellido} tu cuenta ha sido confirmada correctamente, ya puedes iniciar sesion`,
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    /**const msgWelcome = {
       to: user.email,
       from: "soportetecnicodatazo@gmail.com",
       subject: "Bienvenid@ a Datazo!",
@@ -110,9 +142,36 @@ const confirmarCuenta = async (req, res) => {
       .send(msgWelcome)
       .then(() => {
         console.log("Mail de bienvenida enviado");
+        res.redirect("http://localhost:3000/login");
+      })
+      .catch((error) => console.error(error)); */
+
+    //Nodemailer Bloque de Bienvenida
+    const resultTwo = await transporter
+      .sendMail({
+        from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+        to: user.email,
+        subject: "Bienvenid@ a Datazo!",
+        html: `<p>¡Hola! <b>${user.nombre} ${user.apellido}</b></p>
+  
+        <p>¡Bienvenido/a! Estamos encantados de que te hayas unido a nuestra plataforma para encontrar a los mejores profesionales de oficio. Regístrate o inicia sesión para empezar a explorar nuestro catálogo.</p>
+        
+        <p>Si necesitas ayuda, contáctanos.</p>
+        
+        <p>¡Gracias por unirte a nuestra comunidad!</p>
+        
+        <p>Saludos,</p>
+        
+        <p>El equipo de Datazo.com</p>
+        <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
+      })
+      .then(() => {
+        console.log("Mail de bienvenida enviado");
         res.redirect("https://datazo.netlify.app/login");
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.log(error);
+      });
 
     const response = new Promise((resolve) => {
       setTimeout(() => {
@@ -263,7 +322,7 @@ const passwordRecoveryMail = async (req, res) => {
   user.codigoVerificacion = verificationCode;
   await user.save();
   try {
-    const msg = {
+    /* const msg = {
       to: user.email,
       from: "soportetecnicodatazo@gmail.com",
       subject: "Recuperación de contraseña | Datazo",
@@ -279,7 +338,28 @@ const passwordRecoveryMail = async (req, res) => {
     `,
     };
 
-    await sgMail.send(msg);
+    await sgMail.send(msg); */
+
+    //Bloque de envio de codigo de verificacion con Nodemailer
+    const result = await transporter
+      .sendMail({
+        from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+        to: user.email,
+        subject: "Recuperación de contraseña | Datazo",
+        html: `
+      <p>Estás recibiendo este correo electrónico porque solicitaste recuperar tu contraseña en nuestra aplicación.</p>
+      <p>Ingresa el siguiente código de verificación en la aplicación:</p>
+      <h2 style="margin-top: 0;">${user.codigoVerificacion}</h2>
+      <p>Este código es válido por 15 minutos. Si no lo usas en ese tiempo, deberás generar uno nuevo.</p>
+      <p>Si no solicitaste recuperar tu contraseña, puedes ignorar este mensaje.</p>
+      <p>Atentamente,</p>
+      <p>El equipo de Datazo</p>
+      <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />
+    `,
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     await user.save();
 
@@ -317,7 +397,7 @@ const verifyVerificationCode = async (req, res) => {
   user.codigoVerificacion = null;
   await user.save();
 
-  const msg = {
+  /** const msg = {
     to: user.email,
     from: "soportetecnicodatazo@gmail.com",
     subject: "Verificacion Exitosa",
@@ -328,8 +408,25 @@ const verifyVerificationCode = async (req, res) => {
     <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />
   `,
   };
+  
+  await sgMail.send(msg); */
 
-  await sgMail.send(msg);
+  //Bloque de verificacion exitosa con Nodemailer
+  const result = await transporter
+    .sendMail({
+      from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+      to: user.email,
+      subject: "Verificacion Exitosa",
+      html: `
+    <p>Tu contraseña ha sido actualizada correctamente, gracias por confiar en nosotros!.</p>
+    <p>Atentamente,</p>
+    <p>El equipo de Datazo</p>
+    <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />
+  `,
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   res.status(200).json({ message: "Contraseña actualizada correctamente" });
 };
@@ -408,7 +505,7 @@ const eliminarSolicitud = async (req, res) => {
     const date1 = new Date(solicitud.fecha[0]);
     const date2 = new Date(solicitud.fecha[1]);
 
-    const msg = {
+    /** const msg = {
       to: profesional.email,
       from: "soportetecnicodatazo@gmail.com",
       subject: "Han eliminado una solicitud que estaba en espera",
@@ -435,7 +532,39 @@ const eliminarSolicitud = async (req, res) => {
     `,
     };
 
-    await sgMail.send(msg);
+    await sgMail.send(msg); **/
+
+    //Bloque de notificacion de eliminacion de solicitud al profesional con Nodemailer
+    const result = await transporter
+      .sendMail({
+        from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+        to: profesional.email,
+        subject: "Han eliminado una solicitud que estaba en espera",
+        html: `
+      <p>${profesional.nombre} ${
+          profesional.apellido
+        }! Te contactamos para avisarte que ${user.nombre} ${
+          user.apellido
+        }, ha rechazado la orden de trabajo</p>
+      <p>Tal orden consistía en ${
+        solicitud.descripcion
+      } para las fechas entre ${date1.getFullYear()}-${(date1.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}-${date1
+          .getDate()
+          .toString()
+          .padStart(2, "0")} y ${date2.getFullYear()}-${(date2.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}-${date2.getDate().toString().padStart(2, "0")}.</p>
+      <p>Te vamos a estar avisando cuando tengas otra orden de trabajo, muchas gracias por confiar en nosotros!</p>
+      <p>Atentamente,</p>
+      <p>El equipo de Datazo</p>
+      <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />
+    `,
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     const solicitudIndex = user.misSolicitudes.findIndex(
       (solicitud) => solicitud._id.toString() === solicitudId
@@ -481,7 +610,7 @@ const cancelarPropuesta = async (req, res) => {
       });
     }
 
-    const msg = {
+    /** const msg = {
       to: profesional.email,
       from: "soportetecnicodatazo@gmail.com",
       subject: "Han rechazado tu propuesta de trabajo",
@@ -496,7 +625,25 @@ const cancelarPropuesta = async (req, res) => {
     `,
     };
 
-    await sgMail.send(msg);
+    await sgMail.send(msg); **/
+
+    //bloque de notificacion de rechazo de propuesta de trabajo con Nodemailer
+    const result = await transporter({
+      from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+      to: profesional.email,
+      subject: "Han rechazado tu propuesta de trabajo",
+      html: `
+      <p>${profesional.nombre} ${profesional.apellido}! Te contactamos para avisarte que ${user.nombre} ${user.apellido}, ha rechazado la propuesta de orden de trabajo</p>
+      <p>Tal orden consistía en ${solicitud.descripcion} para las fechas entre ${solicitud.fechaElegida[0]} y ${solicitud.fechaElegida[1]} a la ${solicitud.horario},</p>
+      <p>Tu habías elegido la fecha ${solicitud.fechaElegida} cuyo presupuesto era de: $${solicitud.presupuesto}</p>
+      <p>Te vamos a estar avisando cuando tengas otra orden de trabajo, muchas gracias por confiar en nosotros!</p>
+      <p>Atentamente,</p>
+      <p>El equipo de Datazo</p>
+      <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />
+    `,
+    }).catch((error) => {
+      console.log(error);
+    });
 
     const solicitudIndex = user.misSolicitudes.findIndex(
       (solicitud) => solicitud._id.toString() === solicitudId
@@ -555,7 +702,7 @@ const aceptarPropuesta = async (req, res) => {
     // Guardar los cambios en la base de datos
     await user.save();
 
-    const msg = {
+    /** const msg = {
       to: profesional.email,
       from: "soportetecnicodatazo@gmail.com",
       subject: "Te han aceptado una propuesta desde Datazo!",
@@ -572,7 +719,25 @@ const aceptarPropuesta = async (req, res) => {
     sgMail
       .send(msg)
       .then(() => console.log("Se ha enviado el mail propuesta de trabajo"))
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); **/
+
+    //Bloque de notificacion de aceptacion de propuesta con Nodemailer
+    const result = await transporter({
+      from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+      to: profesional.email,
+      subject: "Te han aceptado una propuesta desde Datazo!",
+      html: `${profesional.nombre} ${profesional.apellido} han respondido a tu propuesta de trabajo!
+    <p>La misma ha sido registrada y guardada en tu sistema de reservas en Datazo!</p>
+    <p><b>Recuerda</b> revisar siempre tu registro de solicitudes para mantener continuo control sobre tus ordenes de trabajo!</p>
+    <p>La propuesta consistia en ${solicitud.descripcion} para el dia ${solicitud.fechaElegida} a la ${solicitud.horario}.</p>
+    <p>El presupuesto era de ${solicitud.presupuesto} para el cliente ${user.nombre} ${user.apellido}.</p>
+    <p>Le hemos facilitado de tu numero de contacto para en caso que tu seas contactado para refinar detalles sobre el trabajo.</p>
+    <p>Gracias por confiar en nosotros. Atentamente, el equipo de Datazo!</p>
+    <br>
+    <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
+    }).catch((error) => {
+      console.log(error);
+    });
 
     return res
       .status(200)
