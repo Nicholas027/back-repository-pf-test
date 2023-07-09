@@ -628,7 +628,7 @@ const cancelarPropuesta = async (req, res) => {
     await sgMail.send(msg); **/
 
     //bloque de notificacion de rechazo de propuesta de trabajo con Nodemailer
-    const result = await transporter({
+    const result = await transporter.sendMail({
       from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
       to: profesional.email,
       subject: "Han rechazado tu propuesta de trabajo",
@@ -722,7 +722,7 @@ const aceptarPropuesta = async (req, res) => {
       .catch((error) => console.error(error)); **/
 
     //Bloque de notificacion de aceptacion de propuesta con Nodemailer
-    const result = await transporter({
+    const result = await transporter.sendMail({
       from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
       to: profesional.email,
       subject: "Te han aceptado una propuesta desde Datazo!",
