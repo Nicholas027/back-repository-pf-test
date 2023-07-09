@@ -1,12 +1,10 @@
 const Professional = require("../models/Professional");
 const mongoose = require("mongoose");
 const User = require("../models/User");
-const sgMail = require("@sendgrid/mail");
+//const sgMail = require("@sendgrid/mail");
 const moment = require("moment");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+//sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const transporter = require("../helpers/mailer");
-
-//generateToken
 
 //get all professionals
 const getProfessionalDetails = async (req, res) => {
@@ -188,9 +186,9 @@ const commentAndRating = async (req, res) => {
   const date2 = new Date(fechaTrabajo[1]);
 
   //Aquí se envía el correo con Sendgrid
-  const msg = {
+  /** const msg = {
     to: emailProf,
-    from: "soportetecnicodatazo@gmail.com",
+    from: "datazosoporte@outlook.com",
     subject: "Te han contactado desde Datazo!",
     html: `<p>¡${nombreProfesional}! Te ha contactado ${nombreCliente} ${apellidoCliente} para solicitar de tus servicios como ${profesion}!</p>
     <p>El solicitante necesita de ${descripcionTrabajo} para las fechas entre ${date1.getFullYear()}-${(
@@ -216,7 +214,8 @@ const commentAndRating = async (req, res) => {
     .send(msg)
     .then(() => console.log("Se ha enviado el mail para contactar"))
     .catch((error) => console.error(error));
-  //Fin de bloque mail
+  //Fin de bloque mail 
+  */
 
   //bloque de reserva Nodemailer (?)
   const result = await transporter
@@ -246,6 +245,7 @@ const commentAndRating = async (req, res) => {
     })
     .then((result) => console.log(result))
     .catch((error) => console.log(error));
+
   const nombreDeProfesional = nombre + " " + apellido;
 
   const nuevoTrabajo = {
@@ -413,7 +413,7 @@ const acceptedWork = async (req, res) => {
       nombreProf.replace(/\+/g, " ")
     );
 
-    const msg = {
+    /** const msg = {
       to: emailCliente,
       from: "soportetecnicodatazo@gmail.com",
       subject: "Te han respondido desde Datazo",
@@ -428,7 +428,26 @@ const acceptedWork = async (req, res) => {
     sgMail
       .send(msg)
       .then(() => console.log("Se ha enviado el mail propuesta de trabajo"))
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); */
+
+    //Bloque de respuesta de solicitud de trabajo con Nodemailer
+    const result = await transporter
+      .sendMail({
+        from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+        to: emailCliente,
+        subject: "Te han respondido desde Datazo",
+        html: `${decodedNombreProfesional} ha respondido a tu solicitud de trabajo!
+    <p>Puedes fijarte en <b>"Mis Solicitudes"</b> la propuesta que ${decodedNombreProfesional} ha hecho sobre tu solicitud</p>
+    <p><b>Recuerda</b> revisar siempre tu registro de solicitudes para mantener continuo control sobre tus solicitudes!</p>
+    <p>En caso de aceptar su propuesta, debes presionar "Aceptar Propuesta", de lo contrario, simplemente puedes rechazarla!</p>
+    <p>Gracias por confiar en nosotros. Atentamente, el equipo de Datazo!</p>
+    <br>
+    <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
+      })
+      .then(() => console.log("Se ha enviado el mail de propuesta de trabajo"))
+      .catch((error) => {
+        console.log(error);
+      });
 
     res.render("accepted");
   } catch (error) {
@@ -484,12 +503,12 @@ const rejectedWork = async (req, res) => {
   if (solicitud.aceptado === false) {
     res.render("beenRejected");
   } else {
-    const msg = {
+    /** const msg = {
       to: mailCli,
       from: "soportetecnicodatazo@gmail.com",
       subject: "Tu solicitud ha sido rechazada",
       html: `${decodedNombreProfesional} ha rechazado lamentablemente tu solicitud de trabajo!
-      <p>Puedes optar por probar otra fecha dentro del formulario de contacto en el perfil suyo. Si lo deseas puedes <a href="https://datazo.netlify.app" target="_blank">volver a Datazo</a>.</p>
+      <p>Puedes optar por probar otra fecha dentro del formulario de contacto en el perfil suyo. Si lo deseas puedes <a href="https://datazotest.netlify.app" target="_blank">volver a Datazo</a>.</p>
       <p>Gracias por confiar en nosotros. Atentamente, el equipo de Datazo!</p>
       <br>
       <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
@@ -497,7 +516,25 @@ const rejectedWork = async (req, res) => {
     sgMail
       .send(msg)
       .then(() => console.log("Se ha enviado el mail de rechazo de trabajo"))
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error)); */
+
+    //Bloque de rechazo de solicitud de trabajo
+    const result = await transporter
+      .sendMail({
+        from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
+        to: mailCli,
+        subject: "Tu solicitud ha sido rechazada",
+        html: `${decodedNombreProfesional} ha rechazado lamentablemente tu solicitud de trabajo!
+      <p>Puedes optar por probar otra fecha dentro del formulario de contacto en el perfil suyo. Si lo deseas puedes <a href="https://datazotest.netlify.app" target="_blank">volver a Datazo</a>.</p>
+      <p>Gracias por confiar en nosotros. Atentamente, el equipo de Datazo!</p>
+      <br>
+      <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
+      })
+      .then(() => console.log("Se ha enviado el mail de rechazo de trabajo"))
+      .catch((error) => {
+        console.log(error);
+      });
+
     // Actualizar el estado de aceptado a false = solicitud rechazada
     solicitud.aceptado = false;
 
