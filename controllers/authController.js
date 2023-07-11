@@ -97,33 +97,16 @@ const confirmarCuenta = async (req, res) => {
 
     await user.save();
 
-    // sendgrid mail confirm
-    /** const msg = {
+    const result = await transporter.sendMail({
+      from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
       to: user.email,
-      from: "soportetecnicodatazo@gmail.com",
       subject: "Verificacion de Usuario Datazo",
       html: `${user.nombre} ${user.apellido} tu cuenta ha sido confirmada correctamente, ya puedes iniciar sesion`,
-    };
-    sgMail
-      .send(msg)
-      .then(() => console.log("La confirmación de la cuenta ha sido exitosa!"))
-      .catch((error) => console.error(error)); */
+    });
 
-    //Nodemailer Bloque de Confirmación
-    const result = await transporter
-      .sendMail({
-        from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
-        to: user.email,
-        subject: "Verificacion de Usuario Datazo",
-        html: `${user.nombre} ${user.apellido} tu cuenta ha sido confirmada correctamente, ya puedes iniciar sesion`,
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    /**const msgWelcome = {
+    const resultTwo = await transporter.sendMail({
+      from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
       to: user.email,
-      from: "soportetecnicodatazo@gmail.com",
       subject: "Bienvenid@ a Datazo!",
       html: `<p>¡Hola! <b>${user.nombre} ${user.apellido}</b></p>
   
@@ -137,52 +120,13 @@ const confirmarCuenta = async (req, res) => {
         
         <p>El equipo de Datazo.com</p>
         <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
-    };
-    sgMail
-      .send(msgWelcome)
-      .then(() => {
-        console.log("Mail de bienvenida enviado");
-        res.redirect("http://localhost:3000/login");
-      })
-      .catch((error) => console.error(error)); */
-
-    //Nodemailer Bloque de Bienvenida
-    const resultTwo = await transporter
-      .sendMail({
-        from: `Soporte Tecnico Datazo ${process.env.NODEMAILER_USER}`,
-        to: user.email,
-        subject: "Bienvenid@ a Datazo!",
-        html: `<p>¡Hola! <b>${user.nombre} ${user.apellido}</b></p>
-  
-        <p>¡Bienvenido/a! Estamos encantados de que te hayas unido a nuestra plataforma para encontrar a los mejores profesionales de oficio. Regístrate o inicia sesión para empezar a explorar nuestro catálogo.</p>
-        
-        <p>Si necesitas ayuda, contáctanos.</p>
-        
-        <p>¡Gracias por unirte a nuestra comunidad!</p>
-        
-        <p>Saludos,</p>
-        
-        <p>El equipo de Datazo.com</p>
-        <img src="https://i.ibb.co/s5M2hB8/datazologo.png" alt="datazologo" border="0" />`,
-      })
-      .then(() => {
-        console.log("Mail de bienvenida enviado");
-        res.redirect("https://datazo.netlify.app/login");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-
-    const response = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ ok: "Cuenta verificada. Ya puedes iniciar sesión!" });
-      }, 3000);
     });
 
-    return res.json(await response);
+    // Redireccionar a la página de inicio de sesión del frontend
+    res.redirect("https://datazo.netlify.app/login");
   } catch (error) {
-    res.json({ ok: "Cuenta Verificada" });
-    return res.redirect("/auth/login");
+    console.log(error);
+    res.redirect("/auth/login");
   }
 };
 
